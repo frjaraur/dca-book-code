@@ -6,7 +6,7 @@ services:
     image: ${dockerhubid}/simplest-lab:simplestlb${prodversion}
     environment:
       - APPLICATION_ALIAS=simplestapp
-      - APPLICATION_PORT=${APP_PORT}
+      - APPLICATION_PORT=3000
     networks:
       simplestlab:
           aliases:
