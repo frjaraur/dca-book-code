@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: simplestdb-pvc
+  labels:
+    tier: database
+    lab: simple
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simplestdb
+  labels:
+    tier: database
+    lab: simple
+spec:
+  selector:
+    matchLabels:
+      tier: database
+      lab: simple
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: database
+        lab: simple
+    spec:
+      containers:
+      - image: codegazers/simplest-lab:simplestdb
+        name: simplestdb
+        env:
+          - name: POSTGRES_PASSWORD
+            value: changeme
+        ports:
+        - containerPort: 5432
+          name: postgres
+        volumeMounts:
+        - name: simplestdb-volume
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: simplestdb-volume
+        persistentVolumeClaim:
+          claimName: simplestdb-pvc
